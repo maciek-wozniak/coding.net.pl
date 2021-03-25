@@ -114,23 +114,39 @@ class User extends \yii\db\ActiveRecord
             $this->status = self::STATUS_INACTIVE;
         }
 
+        return parent::beforeSave($insert);
+    }
+
+    public function afterSave($insert, $changedAttributes) {
         if ($insert && !$this->isUnder18()) {
             $this->sendWelcomeMail();
         }
 
-        return parent::beforeSave($insert);
+        parent::afterSave($insert, $changedAttributes);
     }
 
     private function sendWelcomeMail() {
-        // todo: configure smtp please
-//        Yii::$app->mailer->compose();
+        Yii::$app
+            ->mailer
+            ->compose(
+                ['html' => 'hello'],
+                ['user' => $this]
+            )
+            ->setFrom([Yii::$app->params['senderEmail'] => 'Codingtoday.idhosting.pl mailer'])
+            ->setTo($this->email)
+            ->setSubject('Hello mail!')
+            ->send();
     }
 
-    public function isUnder18() {
-        return (new DateTime())->diff(new DateTime($this->birthday))->y < 18;
+    public function isUnder18(): bool {
+        return $this->getUserAge() < 18;
     }
 
-    public function getFullName() {
+    public function getUserAge(): int {
+        return (new DateTime())->diff(new DateTime($this->birthday))->y;
+    }
+
+    public function getFullName(): string {
         return $this->first_name . ' ' . $this->last_name;
     }
 }

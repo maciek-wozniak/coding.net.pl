@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+//        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'last_name',
             'email:email',
             'birthday',
+            'userAge',
             [
                 'attribute' => 'status',
                 'value' => function ($model) {
@@ -40,6 +41,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     if ($model->status === User::STATUS_INACTIVE) {
                         return 'Inactive';
                     }
+                }
+            ],
+            [
+                'label' => 'Till 18th birthday',
+                'value' => function ($model) {
+                    /** @var $model User */
+                    if ($model->isUnder18()) {
+                        $birthday18 = (new DateTime($model->birthday))->add(new DateInterval('P18Y'))->add(new DateInterval('P1D'));
+                        $till18Birthday = $birthday18->diff(new DateTime());
+                        return $till18Birthday->y . ' years, ' . $till18Birthday->m . ' months, ' . $till18Birthday->d . ' days';
+                    }
+                    return '-';
                 }
             ],
             [
