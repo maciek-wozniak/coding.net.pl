@@ -108,7 +108,29 @@ class User extends \yii\db\ActiveRecord
         return $this->hasMany(ProgrammingLanguage::className(), ['id' => 'language_id'])->viaTable('user_language', ['user_id' => 'id']);
     }
 
+
+    public function beforeSave($insert) {
+        if ($insert && $this->isUnder18()) {
+            $this->status = self::STATUS_INACTIVE;
+        }
+
+        if ($insert && !$this->isUnder18()) {
+            $this->sendWelcomeMail();
+        }
+
+        return parent::beforeSave($insert);
+    }
+
+    private function sendWelcomeMail() {
+        // todo: configure smtp please
+//        Yii::$app->mailer->compose();
+    }
+
     public function isUnder18() {
         return (new DateTime())->diff(new DateTime($this->birthday))->y < 18;
+    }
+
+    public function getFullName() {
+        return $this->first_name . ' ' . $this->last_name;
     }
 }
