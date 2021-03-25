@@ -6,6 +6,7 @@ use DateTime;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "user".
@@ -32,6 +33,8 @@ class User extends \yii\db\ActiveRecord
     const REGISTRATION_BY_API = 2;
     const REGISTRATION_BY_UI = 3;
 
+    public $programmingLanguageList;
+
     /**
      * {@inheritdoc}
      */
@@ -49,6 +52,7 @@ class User extends \yii\db\ActiveRecord
             [['first_name', 'last_name', 'email', 'birthday'], 'required'],
             [['first_name', 'last_name', 'email'], 'string', 'max' => 255],
             [['birthday'], 'date'],
+            [['programmingLanguageList'], 'safe'],
             [['email'], 'email'],
             [['email'], 'unique'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
@@ -84,6 +88,7 @@ class User extends \yii\db\ActiveRecord
             'birthday' => 'Date of birth',
             'status' => 'Status',
             'registration_method' => 'Registration method',
+            'programmingLanguageList' => 'Programming languages',
             'created_at' => 'Created At',
         ];
     }
@@ -121,8 +126,44 @@ class User extends \yii\db\ActiveRecord
         if ($insert && !$this->isUnder18()) {
             $this->sendWelcomeMail();
         }
+        $this->saveUserLanguages();
 
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    private function saveUserLanguages() {
+        $oldIds = ArrayHelper::map($this->programmingLanguages, 'id', 'name');
+        if ($this->programmingLanguageList) {
+            foreach ($this->programmingLanguageList as $id) {
+                if (is_numeric($id) && ($lang = ProgrammingLanguage::findOne($id))) {
+                    if (key_exists($id, $oldIds)) {
+                        unset($oldIds[$id]);
+                    }
+                    else {
+                        $this->link('programmingLanguages', $lang);
+                    }
+                }
+                else {
+                    if ($lang = ProgrammingLanguage::findOne(['name' => $id])) {
+                        $this->link('programmingLanguages', $lang);
+                    }
+                    else {
+                        $newLang = new ProgrammingLanguage();
+                        $newLang->name = $id;
+                        $newLang->save();
+                        $this->link('programmingLanguages', $newLang);
+                    }
+                }
+            }
+        }
+        foreach ($oldIds as $id => $key) {
+            UserLanguage::deleteAll(['user_id' => $this->id, 'language_id' => $id]);
+        }
+    }
+
+    public function afterFind() {
+        $this->programmingLanguageList = ArrayHelper::map($this->programmingLanguages, 'id', 'id');
+        parent::afterFind();
     }
 
     private function sendWelcomeMail() {

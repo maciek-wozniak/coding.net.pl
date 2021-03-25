@@ -1,6 +1,9 @@
 <?php
 
+use app\models\ProgrammingLanguage;
 use kartik\date\DatePicker;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -26,6 +29,16 @@ use yii\widgets\ActiveForm;
             'format' => 'yyyy-mm-dd'
         ]
     ]); ?>
+
+    <?= $form->field($model, 'programmingLanguageList')->widget(Select2::classname(), [
+        'data' => ArrayHelper::map(ProgrammingLanguage::find()->all(), 'id', 'name'),
+        'options' => ['placeholder' => 'Select programming language...', 'multiple' => true],
+        'pluginOptions' => [
+            'tags' => true,
+            'tokenSeparators' => [',', ' '],
+            'maximumInputLength' => 50
+        ],
+    ]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
