@@ -24,14 +24,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'birthday')->widget(DatePicker::classname(), [
-        'options' => ['placeholder' => 'Enter birth date ...'],
-        'pluginOptions' => [
-            'autoclose' => true,
-            'format' => 'yyyy-mm-dd'
-        ]
-    ]); ?>
-
     <?= $form->field($model, 'programmingLanguageList')->widget(Select2::classname(), [
         'data' => ArrayHelper::map(ProgrammingLanguage::find()->all(), 'id', 'name'),
         'options' => ['placeholder' => 'Select programming language...', 'multiple' => true],

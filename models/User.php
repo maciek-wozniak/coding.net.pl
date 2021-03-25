@@ -50,10 +50,9 @@ class User extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['first_name', 'last_name', 'email', 'birthday', 'pesel'], 'required'],
+            [['first_name', 'last_name', 'email', 'pesel'], 'required'],
             [['first_name', 'last_name', 'email'], 'string', 'max' => 255],
             [['pesel'], 'string', 'min' => 11, 'max' => 11],
-            [['birthday'], 'date'],
             [['programmingLanguageList'], 'safe'],
             [['email'], 'email'],
             [['email'], 'unique'],
@@ -130,10 +129,30 @@ class User extends \yii\db\ActiveRecord
         }
     }
 
+    public function calculateDateOfBirth() {
+        $year = substr($this->pesel, 0, 2);
+        $day = substr($this->pesel, 4, 2);
+        $month = +substr($this->pesel, 2, 2);
+
+        $year = $month > 0 && $month < 20 ? '19' . $year : $year;
+        $year = $month > 20 && $month < 40 ? '20' . $year : $year;
+        $year = $month > 40 && $month < 60 ? '21' . $year : $year;
+        $year = $month > 60 && $month < 80 ? '22' . $year : $year;
+        $year = $month > 80 ? '18' . $year : $year;
+
+        $month = $month > 20 && $month < 40 ? $month - 20 : $month;
+        $month = $month > 40 && $month < 60 ? $month - 40 : $month;
+        $month = $month > 60 && $month < 80 ? $month - 60 : $month;
+        $month = $month > 80 ? $month - 80 : $month;
+
+        $this->birthday = (new DateTime($year . '-' . $month . '-' . $day))->format('Y-m-d');
+    }
+
     public function beforeSave($insert) {
         if ($insert && $this->isUnder18()) {
             $this->status = self::STATUS_INACTIVE;
         }
+        $this->calculateDateOfBirth();
 
         return parent::beforeSave($insert);
     }
@@ -178,8 +197,8 @@ class User extends \yii\db\ActiveRecord
     }
 
     public function afterFind() {
-        $this->programmingLanguageList = ArrayHelper::map($this->programmingLanguages, 'id', 'id');
         parent::afterFind();
+        $this->programmingLanguageList = ArrayHelper::map($this->programmingLanguages, 'id', 'id');
     }
 
     private function sendWelcomeMail() {
