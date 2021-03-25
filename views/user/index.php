@@ -31,12 +31,24 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+//        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
             'first_name',
             'last_name',
+            'pesel',
+            [
+                'label' => 'Programming languages',
+                'value' => function ($model) {
+                    $result = '';
+                    foreach ($model->programmingLanguages as $language) {
+                        $result .= $language->name . "<br/>";
+                    }
+                    return $result;
+                },
+                'format' => 'html'
+            ],
             'email:email',
             'birthday',
             'userAge',

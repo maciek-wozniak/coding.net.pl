@@ -14,3 +14,23 @@ body {
     padding: 70px 15px 20px;
 }
 
+@media (min-width: 1300px) {
+    .container {
+        width: 1250px;
+    }
+}
+@media (min-width: 1400px) {
+    .container {
+        width: 1350px;
+    }
+}
+@media (min-width: 1500px) {
+    .container {
+        width: 1450px;
+    }
+}
+@media (min-width: 1600px) {
+    .container {
+        width: 1550px;
+    }
+}

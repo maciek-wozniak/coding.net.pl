@@ -20,6 +20,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'pesel')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'birthday')->widget(DatePicker::classname(), [

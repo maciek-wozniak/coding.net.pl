@@ -14,6 +14,7 @@ use yii\helpers\ArrayHelper;
  * @property int $id
  * @property string $first_name
  * @property string $last_name
+ * @property string $pesel
  * @property string $email
  * @property string $birthday
  * @property int $status
@@ -49,8 +50,9 @@ class User extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['first_name', 'last_name', 'email', 'birthday'], 'required'],
+            [['first_name', 'last_name', 'email', 'birthday', 'pesel'], 'required'],
             [['first_name', 'last_name', 'email'], 'string', 'max' => 255],
+            [['pesel'], 'string', 'min' => 11, 'max' => 11],
             [['birthday'], 'date'],
             [['programmingLanguageList'], 'safe'],
             [['email'], 'email'],
@@ -58,6 +60,8 @@ class User extends \yii\db\ActiveRecord
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]],
             ['registration_method', 'in', 'range' => [self::REGISTRATION_BY_CLI, self::REGISTRATION_BY_API, self::REGISTRATION_BY_UI]],
+            ['pesel', 'match', 'pattern' => '/[0-9]{11}/'],
+            ['pesel', 'validatePesel']
         ];
     }
 
@@ -84,6 +88,7 @@ class User extends \yii\db\ActiveRecord
             'id' => 'ID',
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
+            'pesel' => 'Pesel',
             'email' => 'Email',
             'birthday' => 'Date of birth',
             'status' => 'Status',
@@ -113,6 +118,17 @@ class User extends \yii\db\ActiveRecord
         return $this->hasMany(ProgrammingLanguage::className(), ['id' => 'language_id'])->viaTable('user_language', ['user_id' => 'id']);
     }
 
+    public function validatePesel($attribute) {
+        $sum = 0;
+        $multiplier = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3, 0];
+        for ($i = 0; $i < strlen($this->pesel) - 1; $i++) {
+            $sum += $multiplier[$i] * $this->pesel[$i];
+        }
+
+        if (+$this->pesel[strlen($this->pesel) - 1] !== (10 - ($sum % 10)) % 10) {
+            $this->addError($attribute, 'Pesel is invalid.');
+        }
+    }
 
     public function beforeSave($insert) {
         if ($insert && $this->isUnder18()) {

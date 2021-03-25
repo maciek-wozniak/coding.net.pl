@@ -33,6 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'first_name',
             'last_name',
+            'pesel',
             'email:email',
             'birthday',
             [
@@ -59,6 +60,17 @@ $this->params['breadcrumbs'][] = $this->title;
                         return 'UI';
                     }
                 }
+            ],
+            [
+                'label' => 'Programming languages',
+                'value' => function ($model) {
+                    $result = '';
+                    foreach ($model->programmingLanguages as $language) {
+                        $result .= $language->name . "<br/>";
+                    }
+                    return $result;
+                },
+                'format' => 'html'
             ],
             'created_at',
         ],
