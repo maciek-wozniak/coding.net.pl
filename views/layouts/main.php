@@ -39,6 +39,7 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
+            ['label' => 'Languages', 'url' => ['/language/index']],
         ],
     ]);
     NavBar::end();
