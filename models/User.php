@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use DateTime;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
@@ -13,6 +14,9 @@ use yii\db\Expression;
  * @property string $first_name
  * @property string $last_name
  * @property string $email
+ * @property string $birthday
+ * @property int $status
+ * @property int $registration_method
  * @property string $createad_at
  *
  * @property UserLanguage[] $userLanguages
@@ -20,6 +24,14 @@ use yii\db\Expression;
  */
 class User extends \yii\db\ActiveRecord
 {
+
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+
+    const REGISTRATION_BY_CLI = 1;
+    const REGISTRATION_BY_API = 2;
+    const REGISTRATION_BY_UI = 3;
+
     /**
      * {@inheritdoc}
      */
@@ -34,9 +46,14 @@ class User extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['first_name', 'last_name', 'email'], 'required'],
+            [['first_name', 'last_name', 'email', 'birthday'], 'required'],
             [['first_name', 'last_name', 'email'], 'string', 'max' => 255],
-            ['email', 'email'],
+            [['birthday'], 'date'],
+            [['email'], 'email'],
+            [['email'], 'unique'],
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]],
+            ['registration_method', 'in', 'range' => [self::REGISTRATION_BY_CLI, self::REGISTRATION_BY_API, self::REGISTRATION_BY_UI]],
         ];
     }
 
@@ -64,6 +81,9 @@ class User extends \yii\db\ActiveRecord
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'email' => 'Email',
+            'birthday' => 'Date of birth',
+            'status' => 'Status',
+            'registration_method' => 'Registration method',
             'createad_at' => 'Createad At',
         ];
     }
@@ -86,5 +106,9 @@ class User extends \yii\db\ActiveRecord
     public function getProgrammingLanguages()
     {
         return $this->hasMany(ProgrammingLanguage::className(), ['id' => 'language_id'])->viaTable('user_language', ['user_id' => 'id']);
+    }
+
+    public function isUnder18() {
+        return (new DateTime())->diff(new DateTime($this->birthday))->y < 18;
     }
 }
