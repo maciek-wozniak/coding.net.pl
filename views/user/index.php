@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use app\models\User;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\UserSearch */
@@ -17,13 +18,20 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success']) ?>
+        Show users registered in last:
+        <select id="lastRegisteredUsers">
+            <option>- - -</option>
+            <option value="<?= (new DateTime())->sub(new DateInterval('P3D'))->format('Y-m-d') ?>" <?= isset($_GET['UserSearch']['lastRegisteredUsers']) && $_GET['UserSearch']['lastRegisteredUsers'] === (new DateTime())->sub(new DateInterval('P3D'))->format('Y-m-d') ? 'selected' : null ?>>3 days</option>
+            <option value="<?= (new DateTime())->sub(new DateInterval('P7D'))->format('Y-m-d') ?>" <?= isset($_GET['UserSearch']['lastRegisteredUsers']) && $_GET['UserSearch']['lastRegisteredUsers'] === (new DateTime())->sub(new DateInterval('P7D'))->format('Y-m-d') ? 'selected' : null ?>>7 days</option>
+            <option value="<?= (new DateTime())->sub(new DateInterval('P30D'))->format('Y-m-d') ?>" <?= isset($_GET['UserSearch']['lastRegisteredUsers']) && $_GET['UserSearch']['lastRegisteredUsers'] === (new DateTime())->sub(new DateInterval('P30D'))->format('Y-m-d') ? 'selected' : null ?>>30 days</option>
+        </select>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-//        'filterModel' => $searchModel,
+        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -69,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 }
             ],
-            //'createad_at',
+            'created_at',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
@@ -77,3 +85,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 </div>
+
+<?php
+
+
+$this->registerJs('
+
+    $("#lastRegisteredUsers").change(function(){
+        window.location.href = "'. Url::toRoute(['user/index'], true).'?UserSearch[lastRegisteredUsers]=" + $(this).val();
+    });
+
+');

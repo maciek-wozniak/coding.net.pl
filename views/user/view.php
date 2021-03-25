@@ -60,7 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 }
             ],
-            'createad_at',
+            'created_at',
         ],
     ]) ?>
 

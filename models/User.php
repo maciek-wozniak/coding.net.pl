@@ -17,7 +17,7 @@ use yii\db\Expression;
  * @property string $birthday
  * @property int $status
  * @property int $registration_method
- * @property string $createad_at
+ * @property string $created_at
  *
  * @property UserLanguage[] $userLanguages
  * @property ProgrammingLanguage[] $programmingLanguages
@@ -84,7 +84,7 @@ class User extends \yii\db\ActiveRecord
             'birthday' => 'Date of birth',
             'status' => 'Status',
             'registration_method' => 'Registration method',
-            'createad_at' => 'Createad At',
+            'created_at' => 'Created At',
         ];
     }
 

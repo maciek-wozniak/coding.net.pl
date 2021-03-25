@@ -11,6 +11,9 @@ use app\models\User;
  */
 class UserSearch extends User
 {
+
+    public $lastRegisteredUsers = null;
+
     /**
      * {@inheritdoc}
      */
@@ -18,7 +21,8 @@ class UserSearch extends User
     {
         return [
             [['id', 'status', 'registration_method'], 'integer'],
-            [['first_name', 'last_name', 'email', 'birthday', 'createad_at'], 'safe'],
+            [['lastRegisteredUsers'], 'safe'],
+            [['lastRegisteredUsers'], 'date'],
         ];
     }
 
@@ -56,18 +60,9 @@ class UserSearch extends User
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'birthday' => $this->birthday,
-            'status' => $this->status,
-            'registration_method' => $this->registration_method,
-            'createad_at' => $this->createad_at,
-        ]);
-
-        $query->andFilterWhere(['like', 'first_name', $this->first_name])
-            ->andFilterWhere(['like', 'last_name', $this->last_name])
-            ->andFilterWhere(['like', 'email', $this->email]);
+       if ($this->lastRegisteredUsers) {
+            $query->andWhere(['>=', 'created_at', $this->lastRegisteredUsers]);
+       }
 
         return $dataProvider;
     }
