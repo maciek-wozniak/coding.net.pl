@@ -70,7 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     if ($model->isUnder18()) {
                         $birthday18 = (new DateTime($model->birthday))->add(new DateInterval('P18Y'))->add(new DateInterval('P1D'));
                         $till18Birthday = $birthday18->diff(new DateTime());
-                        return $till18Birthday->y . ' years, ' . $till18Birthday->m . ' months, ' . $till18Birthday->d . ' days';
+                        return $till18Birthday->y . ' years, ' . $till18Birthday->m . ' months, ' . $till18Birthday->d . ' days, (' . $till18Birthday->format('%a') . ' days)';
                     }
                     return '-';
                 }
