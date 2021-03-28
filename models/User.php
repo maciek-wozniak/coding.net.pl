@@ -224,6 +224,13 @@ class User extends \yii\db\ActiveRecord
             ->send();
     }
 
+    public function activate() {
+        if ($this->status !== self::STATUS_ACTIVE) {
+            $this->status = self::STATUS_ACTIVE;
+            $this->save();
+        }
+    }
+
     public function isUnder18(): bool {
         return $this->getUserAge() < 18;
     }

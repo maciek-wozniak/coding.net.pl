@@ -91,7 +91,23 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'created_at',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update} {delete} {activate}',
+                'buttons' => [
+                    'activate' => function ($url) {
+                        return Html::a(Html::tag('span', '', ['class' => "glyphicon glyphicon-off"]), $url, ['title' => 'Activate', 'data' => [
+                            'confirm' => 'Are you sure you want to activate this user?',
+                            'method' => 'post'
+                        ]]);
+                    }
+                ],
+                'visibleButtons' => [
+                    'activate' => function ($model) {
+                        return $model->status !== User::STATUS_ACTIVE;
+                    }
+                ],
+            ],
         ],
     ]); ?>
 

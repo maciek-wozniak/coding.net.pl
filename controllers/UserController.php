@@ -24,6 +24,7 @@ class UserController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'activate' => ['POST'],
                 ],
             ],
         ];
@@ -108,6 +109,12 @@ class UserController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionActivate($id) {
+        $model = $this->findModel($id);
+        $model->activate();
+        return $this->redirect('index');
     }
 
     /**
