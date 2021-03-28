@@ -204,6 +204,13 @@ class User extends \yii\db\ActiveRecord
         $this->programmingLanguageList = ArrayHelper::map($this->programmingLanguages, 'id', 'id');
     }
 
+    public function beforeDelete() {
+        foreach ($this->userLanguages as $userLanguage) {
+            $userLanguage->delete();
+        }
+        return parent::beforeDelete();
+    }
+
     private function sendWelcomeMail() {
         Yii::$app
             ->mailer
