@@ -34,6 +34,8 @@ class User extends \yii\db\ActiveRecord
     const REGISTRATION_BY_API = 2;
     const REGISTRATION_BY_UI = 3;
 
+    const SCENARIO_REGISTERED_BY_API = 'API_REGISTERED';
+
     public $programmingLanguageList;
 
     /**
@@ -56,6 +58,7 @@ class User extends \yii\db\ActiveRecord
             [['programmingLanguageList'], 'safe'],
             [['email'], 'email'],
             [['email'], 'unique'],
+            [['registration_method'], 'default', 'value' => self::REGISTRATION_BY_API, 'on' => self::SCENARIO_REGISTERED_BY_API],
             [['status'], 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]],
             ['registration_method', 'in', 'range' => [self::REGISTRATION_BY_CLI, self::REGISTRATION_BY_API, self::REGISTRATION_BY_UI]],
@@ -208,7 +211,7 @@ class User extends \yii\db\ActiveRecord
                 ['html' => 'hello'],
                 ['user' => $this]
             )
-            ->setFrom([Yii::$app->params['senderEmail'] => 'Codingtoday.idhosting.pl mailer'])
+            ->setFrom([Yii::$app->params['senderEmail'] => 'coding.net.pl mailer'])
             ->setTo($this->email)
             ->setSubject('Hello mail!')
             ->send();

@@ -2,7 +2,7 @@
 .idea
 config/db.php
 config/mailer.php
-
+http_cli
 # netbeans project files
 nbproject
 

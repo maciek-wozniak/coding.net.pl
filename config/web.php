@@ -13,10 +13,18 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'api' => [
+            'class' => 'app\modules\api\module',
+        ],
+    ],
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'lrTh1EFv6B9VUfqYHdBBZ3wILXO3uVIQdbH',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ],
         ],
         'formatter' => [
             'dateFormat' => 'yyyy-MM-dd',
@@ -46,6 +54,11 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => ['api/user'],
+                    'pluralize' => false,
+                ],
             ],
         ],
     ],
