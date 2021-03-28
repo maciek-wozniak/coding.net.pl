@@ -56,7 +56,7 @@ class User extends \yii\db\ActiveRecord
             [['programmingLanguageList'], 'safe'],
             [['email'], 'email'],
             [['email'], 'unique'],
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            [['status'], 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]],
             ['registration_method', 'in', 'range' => [self::REGISTRATION_BY_CLI, self::REGISTRATION_BY_API, self::REGISTRATION_BY_UI]],
             ['pesel', 'match', 'pattern' => '/[0-9]{11}/'],
@@ -149,10 +149,10 @@ class User extends \yii\db\ActiveRecord
     }
 
     public function beforeSave($insert) {
+        $this->calculateDateOfBirth();
         if ($insert && $this->isUnder18()) {
             $this->status = self::STATUS_INACTIVE;
         }
-        $this->calculateDateOfBirth();
 
         return parent::beforeSave($insert);
     }

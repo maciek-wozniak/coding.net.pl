@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'adminEmail' => 'hello@codingtoday.idhosting.pl',
-    'senderEmail' => 'hello@codingtoday.idhosting.pl',
-    'senderName' => 'Codingtoday.idhosting.pl mailer',
+    'adminEmail' => 'no-reply@coding.net.pl',
+    'senderEmail' => 'no-reply@coding.net.pl',
+    'senderName' => 'coding.net.pl mailer',
 ];
