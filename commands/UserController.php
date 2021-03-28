@@ -52,8 +52,8 @@ class UserController extends Controller {
                 echo "Activating: " . $user->getFullName() . "\n";
                 $user->activate();
             }
-            echo "All users above 18 are active!\n";
         }
+        echo "All users above 18 are active!\n";
 
         return ExitCode::OK;
     }
