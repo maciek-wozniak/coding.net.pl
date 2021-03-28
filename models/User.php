@@ -224,9 +224,25 @@ class User extends \yii\db\ActiveRecord
             ->send();
     }
 
+    private function sendActivationMail() {
+        Yii::$app
+            ->mailer
+            ->compose(
+                ['html' => 'activation'],
+                ['user' => $this]
+            )
+            ->setFrom([Yii::$app->params['senderEmail'] => 'coding.net.pl mailer'])
+            ->setTo($this->email)
+            ->setSubject('Activation mail!')
+            ->send();
+    }
+
     public function activate() {
         if ($this->status !== self::STATUS_ACTIVE) {
             $this->status = self::STATUS_ACTIVE;
+            if ((new DateTime($this->birthday))->format('m-d') === (new DateTime())->format('m-d')) {
+                $this->sendActivationMail();
+            }
             $this->save();
         }
     }
