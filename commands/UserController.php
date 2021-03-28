@@ -45,4 +45,16 @@ class UserController extends Controller {
         }
     }
 
+    public function actionActivate() {
+        foreach (User::find()->where(['status' => User::STATUS_INACTIVE])->all() as $user) {
+            /** @var $user User */
+            if (!$user->isUnder18()) {
+                echo "Activating: " . $user->getFullName() . "\n";
+                $user->activate();
+            }
+        }
+
+        return ExitCode::OK;
+    }
+
 }
